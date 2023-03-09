@@ -1,6 +1,6 @@
-/* body{
+.modalOpen{
     overflow: hidden;
-} */
+}
 
 .backdrop {
     position: fixed;
