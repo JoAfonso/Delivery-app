@@ -7,6 +7,9 @@ import Checkout from "./Checkout";
 
 const Cart = (props) => {
   const [isCheckout, setIsCheckout] = useState(false);
+  const [submiting, setSubmiting] = useState(false);
+  const [submited, setSubmited] = useState(false);
+
   const cartCtx = useContext(CartContext);
 
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
@@ -39,28 +42,68 @@ const Cart = (props) => {
     setIsCheckout(true);
   };
 
-const modalActions = (<div className={styles.actions}>
-  <button className={styles["button--alt"]} onClick={props.onClose}>
-    Close
-  </button>
-  {hasItens && (
-    <button className={styles.button} onClick={orderHandler}>
-      Order
-    </button>
-  )}
-</div>
+  const submitOrderHadler = (userData) => {
+    setSubmiting(true);
+    fetch(
+      "https://delivery-meal-1447b-default-rtdb.firebaseio.com/orders.json",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          user: userData,
+          orderedItems: cartCtx.items,
+        }),
+      }
+    );
+    setSubmiting(false);
+    setSubmited(true);
+    cartCtx.clearCart();
+  };
 
-)
+  const modalActions = (
+    <div className={styles.actions}>
+      <button className={styles["button--alt"]} onClick={props.onClose}>
+        Close
+      </button>
+      {hasItens && (
+        <button className={styles.button} onClick={orderHandler}>
+          Order
+        </button>
+      )}
+    </div>
+  );
 
-  return (
-    <Modal onClose={props.onClose}>
+  const cardModalContent = (
+    <>
       {cartItems}
       <div className={styles.total}>
         <span>Total Amount:</span>
         <span>{totalAmount}</span>
       </div>
-      {isCheckout && <Checkout onCancel={props.onClose} />}
+      {isCheckout && (
+        <Checkout onConfirm={submitOrderHadler} onCancel={props.onClose} />
+      )}
       {!isCheckout && modalActions}
+    </>
+  );
+
+  const isSubmitingModalContent = <p>Sendind order data...</p>;
+
+  const submitedContentModal = (
+    <>
+      <p>Successfully sent the order!</p>
+      <div className={styles.actions}>
+        <button className={styles.button} onClick={props.onClose}>
+          Close
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <Modal onClose={props.onClose}>
+      {!submiting && !submited && cardModalContent}
+      {submiting && isSubmitingModalContent}
+      {!submiting && submited && submitedContentModal}
     </Modal>
   );
 };
