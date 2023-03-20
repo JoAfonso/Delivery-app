@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Card from "../UI/Card";
 import styles from "./AvaliableMeals.module.css";
 import MealItem from "./MealItem/MealItem";
+import { Rings } from "react-loader-spinner";
 
 const AvaliableMeals = () => {
   const [meals, setMeals] = useState([]);
@@ -9,11 +10,10 @@ const AvaliableMeals = () => {
 
   useEffect(() => {
     fetch("https://delivery-meal-1447b-default-rtdb.firebaseio.com/meal.json")
-  
       .then((response) => {
         return response.json();
       })
-      
+
       .then((data) => {
         const avlbMeals = [];
         for (const key in data) {
@@ -32,7 +32,7 @@ const AvaliableMeals = () => {
   if (isLoading) {
     return (
       <section className={styles.mealsIsLoading}>
-        <p>Loading...</p>
+        <Rings color="red" height="150" width="150" ariaLabel="rings-loading"  radius="12"/>
       </section>
     );
   }

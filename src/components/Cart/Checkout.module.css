@@ -64,3 +64,10 @@
     border-color: #aa0b20;
     background-color: #ffeff1;
   }
+
+  .form p {
+    color: #000;
+    font-size: .8em;
+    font-style: italic;
+    margin: .5em;
+  }
